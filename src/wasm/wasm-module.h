@@ -15,6 +15,7 @@
 #include "src/parsing/preparse-data.h"
 
 #include "src/wasm/signature-map.h"
+#include "src/wasm/wasm-limits.h"
 #include "src/wasm/wasm-opcodes.h"
 
 namespace v8 {
@@ -480,6 +481,14 @@ const bool kGuardRegionsSupported = false;
 
 inline bool EnableGuardRegions() {
   return FLAG_wasm_guard_pages && kGuardRegionsSupported;
+}
+
+inline void* GuardRegionToMemoryStart(void* guard_region_start) {
+  return static_cast<byte*>(guard_region_start) + (kGuardRegionSize / 2);
+}
+
+inline void* MemoryToGuardRegionStart(void* mem_start) {
+  return static_cast<byte*>(mem_start) - (kGuardRegionSize / 2);
 }
 
 void UnpackAndRegisterProtectedInstructions(Isolate* isolate,

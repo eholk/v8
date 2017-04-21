@@ -63,8 +63,7 @@ static void MemoryFinalizer(const v8::WeakCallbackInfo<void>& data) {
   if (!buffer->was_neutered()) {
     void* memory = buffer->backing_store();
     DCHECK(memory != nullptr);
-    base::OS::Free(memory,
-                   RoundUp(kWasmMaxHeapOffset, base::OS::CommitPageSize()));
+    base::OS::Free(MemoryToGuardRegionStart(memory), kGuardRegionSize);
 
     data.GetIsolate()->AdjustAmountOfExternalAllocatedMemory(
         -buffer->byte_length()->Number());
@@ -104,10 +103,12 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
     DCHECK_EQ(0, size % base::OS::CommitPageSize());
 
     // AllocateGuarded makes the whole region inaccessible by default.
-    void* memory = base::OS::AllocateGuarded(alloc_size);
-    if (memory == nullptr) {
+    void* guard_region = base::OS::AllocateGuarded(alloc_size);
+    if (guard_region == nullptr) {
       return nullptr;
     }
+
+    void* memory = GuardRegionToMemoryStart(guard_region);
 
     // Make the part we care about accessible.
     base::OS::Unprotect(memory, size);

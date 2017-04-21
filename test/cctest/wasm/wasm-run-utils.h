@@ -102,9 +102,9 @@ class TestingModule : public ModuleEnv {
         // See the corresponding code in AddMemory. We use a different
         // allocation path when guard regions are enabled, which means we have
         // to free it differently too.
-        const size_t alloc_size =
-            RoundUp(kWasmMaxHeapOffset, v8::base::OS::CommitPageSize());
-        v8::base::OS::Free(instance->mem_start, alloc_size);
+        const size_t alloc_size = kGuardRegionSize;
+        v8::base::OS::Free(MemoryToGuardRegionStart(instance->mem_start),
+                           alloc_size);
       } else {
         free(instance->mem_start);
       }
