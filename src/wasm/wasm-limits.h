@@ -50,8 +50,7 @@ constexpr uint64_t kWasmMaxHeapOffset =
 // round up to the page size, since this all must be done on page granularities,
 // and then multiply by 2 because the guard region goes before and after the
 // memory so we can protect against negative offsets.
-const size_t kGuardRegionSize =
-    2 * RoundUp(kWasmMaxHeapOffset, base::OS::CommitPageSize());
+V8_EXPORT_PRIVATE extern const size_t kGuardRegionSize;
 
 // Limit the control stack size of the C++ wasm interpreter.
 constexpr size_t kV8MaxWasmInterpretedStackSize = 64 * 1024;

@@ -47,6 +47,9 @@ namespace base = v8::base;
     if (FLAG_trace_wasm_compiler) PrintF(__VA_ARGS__); \
   } while (false)
 
+const size_t wasm::kGuardRegionSize =
+    2 * RoundUp(kWasmMaxHeapOffset, base::OS::CommitPageSize());
+
 namespace {
 
 static const int kInvalidSigIndex = -1;
