@@ -127,6 +127,7 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
     return memory;
 #else
     DCHECK(false && "Guard regions are not supported on this platform.");
+    return nullptr;
 #endif
   } else {
     void* memory = isolate->array_buffer_allocator()->Allocate(size);
