@@ -45,7 +45,7 @@ constexpr uint64_t kWasmMaxHeapOffset =
     + std::numeric_limits<uint32_t>::max();    // maximum index value
 
 // The size of the memory region protected when using trap handlers.
-constexpr size_t kGuardRegionSize = (1L << 34); // 16GB
+constexpr size_t kGuardRegionSize = (1L << 34);  // 16GB
 
 // Limit the control stack size of the C++ wasm interpreter.
 constexpr size_t kV8MaxWasmInterpretedStackSize = 64 * 1024;
