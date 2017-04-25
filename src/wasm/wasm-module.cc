@@ -100,6 +100,7 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
   // things that would be unsafe if they expected guard pages where there
   // weren't any.
   if (enable_guard_regions && kGuardRegionsSupported) {
+#if V8_TRAP_HANDLER_SUPPORTED
     // TODO(eholk): On Windows we want to make sure we don't commit the guard
     // pages yet.
 
@@ -124,6 +125,9 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
 
     is_external = true;
     return memory;
+#else
+    DCHECK(false && "Guard regions are not supported on this platform.");
+#endif
   } else {
     void* memory = isolate->array_buffer_allocator()->Allocate(size);
     return memory;
