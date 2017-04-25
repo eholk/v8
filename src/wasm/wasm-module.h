@@ -484,11 +484,13 @@ inline bool EnableGuardRegions() {
 }
 
 inline void* GetMemoryStartFromGuardRegionStart(void* guard_region_start) {
-  return static_cast<byte*>(guard_region_start) + (kGuardRegionSize / 2);
+  DCHECK(guard_region_start != nullptr);
+  return static_cast<byte*>(guard_region_start) + kLowerGuardRegionSize;
 }
 
 inline void* GetGuardRegionStartFromMemoryStart(void* mem_start) {
-  return static_cast<byte*>(mem_start) - (kGuardRegionSize / 2);
+  DCHECK(mem_start != nullptr);
+  return static_cast<byte*>(mem_start) - kLowerGuardRegionSize;
 }
 
 void UnpackAndRegisterProtectedInstructions(Isolate* isolate,

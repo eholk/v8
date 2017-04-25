@@ -960,7 +960,7 @@ void WasmJs::Install(Isolate* isolate) {
   // We round up to the page size, since this all must be done on page
   // granularities, and then multiply by 2 because we add guard regions before
   // and after the Wasm heap so we can protect against negative offsets.
-  DCHECK(wasm::kGuardRegionSize ==
+  DCHECK(wasm::kTotalGuardRegionSize ==
          2 * RoundUp(wasm::kWasmMaxHeapOffset, base::OS::CommitPageSize()));
 #endif
 

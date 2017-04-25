@@ -64,7 +64,7 @@ static void MemoryFinalizer(const v8::WeakCallbackInfo<void>& data) {
     void* memory = buffer->backing_store();
     DCHECK(memory != nullptr);
     base::OS::Free(GetGuardRegionStartFromMemoryStart(memory),
-                   kGuardRegionSize);
+                   kTotalGuardRegionSize);
 
     data.GetIsolate()->AdjustAmountOfExternalAllocatedMemory(
         -buffer->byte_length()->Number());
@@ -99,7 +99,7 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
 
     // We always allocate the largest possible offset into the heap, so the
     // addressable memory after the guard page can be made inaccessible.
-    const size_t alloc_size = kGuardRegionSize;
+    const size_t alloc_size = kTotalGuardRegionSize;
     DCHECK_EQ(0, size % base::OS::CommitPageSize());
 
     // AllocateGuarded makes the whole region inaccessible by default.
