@@ -61,6 +61,7 @@ static void MemoryFinalizer(const v8::WeakCallbackInfo<void>& data) {
   JSArrayBuffer* buffer = *p;
 
   if (!buffer->was_neutered()) {
+#if V8_TRAP_HANDLER_SUPPORTED
     void* memory = buffer->backing_store();
     DCHECK(memory != nullptr);
     base::OS::Free(GetGuardRegionStartFromMemoryStart(memory),
@@ -68,6 +69,11 @@ static void MemoryFinalizer(const v8::WeakCallbackInfo<void>& data) {
 
     data.GetIsolate()->AdjustAmountOfExternalAllocatedMemory(
         -buffer->byte_length()->Number());
+#else
+    DCHECK(false &&
+           "Attempting to free guarded memory when trap handlers are not "
+           "supported");
+#endif
   }
 
   GlobalHandles::Destroy(reinterpret_cast<Object**>(p));

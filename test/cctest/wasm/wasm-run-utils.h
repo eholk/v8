@@ -99,6 +99,7 @@ class TestingModule : public ModuleEnv {
   ~TestingModule() {
     if (instance->mem_start) {
       if (EnableGuardRegions() && module_.is_wasm()) {
+#if V8_TRAP_HANDLER_SUPPORTED
         // See the corresponding code in AddMemory. We use a different
         // allocation path when guard regions are enabled, which means we have
         // to free it differently too.
@@ -106,6 +107,9 @@ class TestingModule : public ModuleEnv {
         v8::base::OS::Free(
             GetGuardRegionStartFromMemoryStart(instance->mem_start),
             alloc_size);
+#else
+        DCHECK(false && "Guard regions are not supported on this platform");
+#endif
       } else {
         free(instance->mem_start);
       }
