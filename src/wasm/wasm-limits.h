@@ -44,13 +44,8 @@ constexpr uint64_t kWasmMaxHeapOffset =
         std::numeric_limits<uint32_t>::max())  // maximum base value
     + std::numeric_limits<uint32_t>::max();    // maximum index value
 
-// The size of of the memory region protected when using trap handlers.
-//
-// kWasmMaxHeapOffset is the largest offset that a Wasm program can compute.  We
-// round up to the page size, since this all must be done on page granularities,
-// and then multiply by 2 because the guard region goes before and after the
-// memory so we can protect against negative offsets.
-V8_EXPORT_PRIVATE extern const size_t kGuardRegionSize;
+// The size of the memory region protected when using trap handlers.
+constexpr size_t kGuardRegionSize = (1L << 34); // 16GB
 
 // Limit the control stack size of the C++ wasm interpreter.
 constexpr size_t kV8MaxWasmInterpretedStackSize = 64 * 1024;

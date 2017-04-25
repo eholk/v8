@@ -47,9 +47,6 @@ namespace base = v8::base;
     if (FLAG_trace_wasm_compiler) PrintF(__VA_ARGS__); \
   } while (false)
 
-const size_t wasm::kGuardRegionSize =
-    2 * RoundUp(kWasmMaxHeapOffset, base::OS::CommitPageSize());
-
 namespace {
 
 static const int kInvalidSigIndex = -1;
@@ -66,7 +63,8 @@ static void MemoryFinalizer(const v8::WeakCallbackInfo<void>& data) {
   if (!buffer->was_neutered()) {
     void* memory = buffer->backing_store();
     DCHECK(memory != nullptr);
-    base::OS::Free(MemoryToGuardRegionStart(memory), kGuardRegionSize);
+    base::OS::Free(GetGuardRegionStartFromMemoryStart(memory),
+                   kGuardRegionSize);
 
     data.GetIsolate()->AdjustAmountOfExternalAllocatedMemory(
         -buffer->byte_length()->Number());
@@ -110,7 +108,7 @@ void* TryAllocateBackingStore(Isolate* isolate, size_t size,
       return nullptr;
     }
 
-    void* memory = GuardRegionToMemoryStart(guard_region);
+    void* memory = GetMemoryStartFromGuardRegionStart(guard_region);
 
     // Make the part we care about accessible.
     base::OS::Unprotect(memory, size);

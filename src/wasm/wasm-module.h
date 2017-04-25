@@ -483,11 +483,11 @@ inline bool EnableGuardRegions() {
   return FLAG_wasm_guard_pages && kGuardRegionsSupported;
 }
 
-inline void* GuardRegionToMemoryStart(void* guard_region_start) {
+inline void* GetMemoryStartFromGuardRegionStart(void* guard_region_start) {
   return static_cast<byte*>(guard_region_start) + (kGuardRegionSize / 2);
 }
 
-inline void* MemoryToGuardRegionStart(void* mem_start) {
+inline void* GetGuardRegionStartFromMemoryStart(void* mem_start) {
   return static_cast<byte*>(mem_start) - (kGuardRegionSize / 2);
 }
 

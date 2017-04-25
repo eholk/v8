@@ -103,8 +103,9 @@ class TestingModule : public ModuleEnv {
         // allocation path when guard regions are enabled, which means we have
         // to free it differently too.
         const size_t alloc_size = kGuardRegionSize;
-        v8::base::OS::Free(MemoryToGuardRegionStart(instance->mem_start),
-                           alloc_size);
+        v8::base::OS::Free(
+            GetGuardRegionStartFromMemoryStart(instance->mem_start),
+            alloc_size);
       } else {
         free(instance->mem_start);
       }
