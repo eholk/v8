@@ -406,6 +406,10 @@
 }],  # variant == turbofan
 
 ##############################################################################
+['arch != x64 and system != linux and variant == wasm_traps', {
+  '*': [SKIP],
+}],
+
 ['variant == wasm_traps', {
   'test-accessors/*': [SKIP],
   'test-api-interceptors/*': [SKIP],
