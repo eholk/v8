@@ -1,0 +1,79 @@
+From 8e4070155f42126523b23365bd8bae2e0864de60 Mon Sep 17 00:00:00 2001
+From: "Eric Holk (eholk)" <eholk@google.com>
+Date: Wed, 15 Feb 2017 10:08:11 -0800
+Subject: [PATCH] Fix windows build
+
+---
+ BUILD.gn                        | 6 +++++-
+ src/trap-handler/trap-handler.h | 5 ++++-
+ src/v8.gyp                      | 4 +++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/BUILD.gn b/BUILD.gn
+index 0892771..a7dfb87 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -1776,7 +1776,6 @@ v8_source_set("v8_base") {
+     "src/transitions-inl.h",
+     "src/transitions.cc",
+     "src/transitions.h",
+-    "src/trap-handler/handler-inside.cc",
+     "src/trap-handler/handler-outside.cc",
+     "src/trap-handler/handler-shared.cc",
+     "src/trap-handler/trap-handler-internal.h",
+@@ -1934,6 +1933,11 @@ v8_source_set("v8_base") {
+       "src/x64/simulator-x64.h",
+       "src/x64/sse-instr.h",
+     ]
++    if (is_linux) {
++      sources += [
++        "src/trap-handler/handler-inside.cc",
++      ]
++    }
+   } else if (v8_current_cpu == "arm") {
+     sources += [  ### gcmole(arch:arm) ###
+       "src/arm/assembler-arm-inl.h",
+diff --git a/src/trap-handler/trap-handler.h b/src/trap-handler/trap-handler.h
+index 3e63cab..f413437 100644
+--- a/src/trap-handler/trap-handler.h
++++ b/src/trap-handler/trap-handler.h
+@@ -8,10 +8,13 @@
+ #include <signal.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+-#include <ucontext.h>
+ 
+ #include "src/base/build_config.h"
+ 
++#if V8_OS_LINUX
++#include <ucontext.h>
++#endif
++
+ namespace v8 {
+ namespace internal {
+ namespace trap_handler {
+diff --git a/src/v8.gyp b/src/v8.gyp
+index ccc8ce3..1fb7f64 100644
+--- a/src/v8.gyp
++++ b/src/v8.gyp
+@@ -1275,7 +1275,6 @@
+         'transitions-inl.h',
+         'transitions.cc',
+         'transitions.h',
+-        'trap-handler/handler-inside.cc',
+         'trap-handler/handler-outside.cc',
+         'trap-handler/handler-shared.cc',
+         'trap-handler/trap-handler.h',
+@@ -1670,6 +1669,9 @@
+             'third_party/valgrind/valgrind.h',
+           ],
+         }],
++        ['v8_target_arch=="x64" and OS=="linux"', {
++            'trap-handler/handler-inside.cc',
++        }],
+         ['v8_target_arch=="ppc" or v8_target_arch=="ppc64"', {
+           'sources': [  ### gcmole(arch:ppc) ###
+             'builtins/ppc/builtins-ppc.cc',
+-- 
+2.10.1.windows.1
+
